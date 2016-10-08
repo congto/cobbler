@@ -10,10 +10,10 @@
 # External Variables
 
 # Services IP Address on the server
-IP_ADDR=$1
+IP_ADDR=172.16.69.237
 # DHCP Server IP Range. First and Last
-DHCP_MIN_HOST=$2
-DHCP_MAX_HOST=$3
+DHCP_MIN_HOST=172.16.69.30
+DHCP_MAX_HOST=172.16.69.39
 
 # Install epel-release
 yum install -y epel-release
