@@ -24,10 +24,10 @@ yum install -y cobbler cobbler-web dhcp wget perl bzip2 pykickstart fence-agents
 yum install -y https://dl.fedoraproject.org/pub/epel/6/x86_64/debmirror-2.14-2.el6.noarch.rpm
 
 # Get network information for the given IP
-NETMASK=$(ifconfig | grep $IP_ADDR | awk '{print $4}')
-NETDEVICE=$(ifconfig | grep -B1 $IP_ADDR | head -1 | sed 's/://' | awk '{print $1}')
-NETPREFIX=$(echo $(echo "obase=2; $(echo $NETMASK | sed 's/\./\;/g')" | bc) | sed 's/\( \|0\)//g' | wc -L)
-NETWORK=$(ipcalc -n ${IP_ADDR}/${NETPREFIX} | cut -d '=' -f 2)
+NETMASK=255.255.255.0
+NETDEVICE=eth1
+NETPREFIX=24
+NETWORK=172.16.69.0
 
 # Change IP and manage_dhcp in cobbler settings
 sed -i "s/127\.0\.0\.1/${IP_ADDR}/" /etc/cobbler/settings
@@ -35,8 +35,8 @@ sed -i "s/manage_dhcp: .*/manage_dhcp: 1/" /etc/cobbler/settings
 
 # Change DHCP server template to match the given network configuration
 sed -i "s/subnet .* netmask .* {/subnet $NETWORK netmask $NETMASK {/" /etc/cobbler/dhcp.template
-sed -i "/option routers             192.168.1.5;/d" /etc/cobbler/dhcp.template
-sed -i "/option domain-name-servers 192.168.1.1;/d" /etc/cobbler/dhcp.template
+sed -i "/option routers             172.16.69.1;/d" /etc/cobbler/dhcp.template
+sed -i "/option domain-name-servers 8.8.8.8;/d" /etc/cobbler/dhcp.template
 sed -i "s/range dynamic-bootp .*/range dynamic-bootp        ${DHCP_MIN_HOST} ${DHCP_MAX_HOST};/" /etc/cobbler/dhcp.template
 
 # Enable tftp service
